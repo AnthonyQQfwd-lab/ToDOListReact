@@ -1,4 +1,33 @@
 {
   "Usuarios": [
+    {
+      "id": "dd4a",
+      "nombre": "Anthony",
+      "gmail": "123@gmail.com",
+      "password": "123",
+      "tasks": [
+        "Tarea 1",
+        "asdads",
+        "       "
+      ]
+    },
+    {
+      "id": "cdaa",
+      "nombre": "Maria",
+      "gmail": "456@gmail.com",
+      "password": "456",
+      "tasks": [
+        "Tarea maria"
+      ]
+    },
+    {
+      "id": "2881",
+      "nombre": "a",
+      "gmail": "faa45456fgh@gmail.com",
+      "password": "123",
+      "tasks": [
+        "tarea1"
+      ]
+    }
   ]
 }
