@@ -1,47 +1,62 @@
-import React, { useRef } from 'react';
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getUsuarios } from '../services/CRUD.jsx';
-import "../styles/LoginPage/Login.css";
+
 
 function Form() {
-    const gmail = useRef();
-    const password = useRef();
+    // ===== SECCIÓN  INICIALIZACIÓN DE REFERENCIAS Y HOOKS =====
+    const [usuario, setUsuario] = useState(null);
+    const [usuarios, setUsuarios] = useState([])
+    const [gmail, setGmail] = useState("")
+    const [password, setPassword] = useState("")
     const navigate = useNavigate();
 
-    const handleSubmit = async (evento) => {
-        evento.preventDefault();
-        
-        const usuarioRecibidos = await getUsuarios();
-        const usuario = usuarioRecibidos.find(u => 
-            u.gmail.trim().toLowerCase() === gmail.current.value.trim().toLowerCase() &&
-            u.password === password.current.value
+    // ===== SECCIÓN 1: EFECTO PARA CARGAR USUARIOs AL MONTAR COMPONENTE =====
+    
+    useEffect(() => {
+            async function fetchUsuarios() {
+                const usuarios = await getUsuarios();
+                setUsuarios(usuarios);
+            }
+            fetchUsuarios();
+        }, []);
+    
+    function iniciarSesion()
+    {
+        const usuarioVerificado = usuarios.find(u => 
+            u.gmail.trim().toLowerCase() === gmail.trim().toLowerCase() &&
+            u.password === password
         );
-
-        if (usuario) {
+        console.log(gmail, password)
+        if(usuarioVerificado)
+        {
             alert("Inicio de sesión exitoso");
             sessionStorage.setItem('usuarioActual', JSON.stringify({
-                nombre: usuario.nombre,
-                email: usuario.gmail,
-                password: usuario.password
+                nombre: usuarioVerificado.nombre,
+                email: usuarioVerificado.gmail,
+                password: usuarioVerificado.password
             }));
             navigate('/TaskManager');
-        } else {
+        }
+        else
+        {
             alert("Usuario o contraseña incorrectos");
         }
-    };
+    }
 
+    // ===== SECCIÓN 3: RENDERIZADO DEL FORMULARIO DE LOGIN =====
     return (
         <div>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="">Correo electronico</label><br />
-                <input type="text" placeholder='Gmail' ref={gmail} /><br />
+            <div>
+                <label>Correo electronico</label><br />
+                <input type="text" placeholder='Gmail' value={gmail} onChange={(e)=>setGmail(e.target.value)}  /><br />
                 <label htmlFor="">Contraseña</label><br />
-                <input type="password" placeholder='Contraseña' ref={password} /><br />
-                <div id="btnsContainer">
-                    <button type='submit'>Iniciar sesion</button>
+                <input type="password" placeholder='Contraseña' value={password} onChange={(e)=>setPassword(e.target.value)} /><br />
+            </div>
+            <div id="btnsContainer">
+                    <button onClick={iniciarSesion}>Iniciar sesion</button>
                     <button onClick={() => navigate("/Register")}>Registrarse</button>
-                </div>
-            </form>
+            </div>
         </div>
     );
 }

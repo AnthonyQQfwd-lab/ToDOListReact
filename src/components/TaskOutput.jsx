@@ -2,93 +2,79 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { getUsuarios, createUsuarios, updateUsuario, deleteUsuario } from '../services/CRUD.jsx';
 
-function TaskOutput() {
+function TaskOutput(usuarioInfo) {
+
+    console.log(usuarioInfo)
+
+    // ===== SECCIÓN 1: INICIALIZACIÓN DE ESTADOS =====
     const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
-    const [usuarioBuscado, setUsuarioBuscado] = useState(null);
-    const taskEdit = useRef();
-    useEffect(() => {
-        async function fetchUsuario() {
-            const usuarios = await getUsuarios();
-            const encontrado = usuarios.find(u => u.gmail === usuarioActual.email);
-            setUsuarioBuscado(encontrado);
-        }
-        fetchUsuario();
-    }, []);
+    const [usuario, setUsuario] = useState(null);
+    const [indiceActual, setIndiceActual] = useState(null);
+    const [tareaEditada, setTareaEditada] = useState("");
+    
+    
+    
 
-    async function deleteTask(i)
+    // ===== SECCIÓN 3: FUNCIÓN PARA ELIMINAR TAREA =====
+    async function deleteTarea(i)
     {
-        
-        console.log("indice en", i)
-        const usuarios = await getUsuarios();
-        const usuarioBuscado = usuarios.find(u => u.gmail === usuarioActual.email);
-        
-        console.log("todas las tareas", usuarioBuscado.tasks)
-        console.log("tarea para eliminar", usuarioBuscado.tasks[i])
-
-        usuarioBuscado.tasks.splice(i,1)
-
-        const TasksList = usuarioBuscado.tasks
-
-        console.log("lista de tarea ya eliminada", TasksList )
+        usuario.tasks.splice(i,1)
+        const TasksList = usuario.tasks
         await updateUsuario(
-            usuarioBuscado.id, 
+            usuario.id, 
             { tasks: TasksList }
         )
-        window.location.reload();
+        
     }
 
-
-    async function showModal(i)
+    // ===== SECCIÓN 4: FUNCIÓN PARA MOSTRAR MODAL DE EDICIÓN =====
+    async function showModal()
     {
         modal.showModal()
-        
-
-
-        async function editTask(i)
-        {
-            const usuarios = await getUsuarios();
-            const usuarioBuscado = usuarios.find(u => u.gmail === usuarioActual.email);
-            usuarioBuscado.tasks[i] = taskEdit.current.value
-            const TasksList = usuarioBuscado.tasks
-            console.log("lista de tarea ya editada", TasksList )
-            await updateUsuario(
-                usuarioBuscado.id, 
-                { tasks: TasksList }
-            )
-            window.location.reload();
-
-
-        }
-
-        return {editTask}
     }
 
+    // ===== SECCIÓN 5: FUNCIÓN PARA EDITAR TAREA =====
+    async function editTask()
+        {
+            console.log("indece actual", indiceActual)
+            usuario.tasks[indiceActual] = tareaEditada
+            const tasksList = usuario.tasks
+            await updateUsuario(
+                usuario.id, 
+                { tasks: tasksList }
+            )
+        
+        }
+
+    // ===== SECCIÓN 6: FUNCIÓN PARA CERRAR MODAL =====
     function hideModal()
     {
         modal.close();
     }
 
-    
-
+    // ===== SECCIÓN 7: RENDERIZADO DEL COMPONENTE =====
     return (
         <div>
+            {/* Modal para editar tarea */}
             <dialog id="modal">
                 <label htmlFor="">Editar Tarea:</label>
-                <input type="text" ref={taskEdit}/>
-                <button onClick={() => editTask(i)}>enviar</button>
+                <input type="text" value={tareaEditada} onChange={(e)=>setTareaEditada(e.target.value)}/>
+                <button type="text" onClick={editTask}>Enviar</button>
                 <button onClick={hideModal}>X</button>
             </dialog>
 
+            {/* Lista de tareas del usuario */}
             <ul>
-                {usuarioBuscado?.tasks?.length > 0
-                    ? usuarioBuscado.tasks.map((task, i) => (
-                        <li key={i}>{task}
-                            <button onClick={() => deleteTask(i)}>Eliminar</button>
-                            <button onClick={() => showModal(i)}>Editar</button>
+                {usuarioInfo?.tasks?.length > 0
+                    ? usuarioInfo.tasks.map((tarea, i) => (
+                        <li key={i}>{tarea}
+                            <button onClick={() => deleteTarea(i)}>Eliminar</button>
+                            <button onClick={() => {showModal(); setIndiceActual(i);}}>Editar</button>
                         </li>
                     ))
                     : <li>No hay ninguna tarea</li>
                 }
+                
             </ul>
         </div>
     );

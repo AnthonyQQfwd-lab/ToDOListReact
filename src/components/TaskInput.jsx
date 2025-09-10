@@ -1,35 +1,82 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getUsuarios, createUsuarios, updateUsuario, deleteUsuario } from '../services/CRUD.jsx';
 
-const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
+import TaskOutput from '../components/TaskOutput'
 
 function TaskInput() {
-    const task = useRef();
+  // ===== SECCIÓN 1: INICIALIZACIÓN DE ESTADOS Y VARIABLES =====
+  const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
+  const [usuarios, setUsuarios] = useState([]);
+  const [usuario, setUsuario] = useState([])
+  const [tarea, setTarea] = useState("");
+  
+  // ===== SECCIÓN 2: EFECTO PARA CARGAR USUARIOS AL MONTAR COMPONENTE =====
+  useEffect(() =>{
+    const fetchUsuario = async () =>{
 
-    async function createTask() {
-        if (task.current.value.trim() !== '') {
-            const usuarios = await getUsuarios();
-            const usuarioBuscado = usuarios.find(u => u.gmail === usuarioActual.email);
-            console.log(usuarioBuscado);
-            
-            let taskList = usuarioBuscado.tasks;
-            taskList.push(task.current.value);
-            
-            usuarioBuscado.tasks = taskList;
-            await updateUsuario(usuarioBuscado.id, usuarioBuscado);
-            window.location.reload();
-        } else {
-            alert("Por favor Escriba la tarea");
-        }
+      try {
+        const usuariosRecibidos = await getUsuarios();
+        setUsuarios(usuariosRecibidos);
+      } catch (error) {
+        console.error("Error al traer los usuarios del servicio", error)
+      }
+
     }
+    fetchUsuario();
+  }, [])
 
-    return (
-        <div>
-            <label htmlFor="">Tarea:</label>
-            <input type="text" ref={task} />
-            <button onClick={createTask}>Crear Tarea</button>
-        </div>
-    );
+  useEffect(() =>{
+    const fetchUsuario = async () =>{
+
+      try {
+        const usuariosRecibidos = await getUsuarios();
+        const usuarioEncontrado = usuarios.find(u =>
+            u.gmail.trim().toLowerCase() === gmail.trim().toLowerCase()
+        );
+        setUsuario(usuarioEncontrado)
+
+        setUsuarios(usuariosRecibidos);
+      } catch (error) {
+        console.error("Error al traer los usuarios del servicio", error)
+      }
+
+    }
+    fetchUsuario();
+  }, [])
+
+  // ===== SECCIÓN 3: FUNCIÓN PARA CREAR Y GUARDAR NUEVA TAREA =====
+  const cargarTarea = async () =>
+  {
+    
+    if (tarea.trim() !== '')
+    {
+      const usuarioBuscado = usuarios.find(u => u.gmail === usuarioActual.email);
+      console.log(usuarioBuscado)
+
+      const listaTarea = usuarioBuscado.tasks || [];
+      listaTarea.push(tarea)
+      usuarioBuscado.tasks = listaTarea;
+      await updateUsuario(usuarioBuscado.id, usuarioBuscado);
+      setUsuarios([...usuarios,usuarioBuscado])
+      console.log(usuarios)
+
+    }
+    else
+    {
+      alert("por favor especifique el nombre de la tarea")
+    }
+  }
+
+  // ===== SECCIÓN 4: RENDERIZADO DEL COMPONENTE =====
+  return (
+      <div>
+          <label htmlFor="">Tarea:</label>
+          <input type="text" id="tarea" value={tarea} onChange={(e)=>setTarea(e.target.value)}/>
+          <button onClick={cargarTarea}>Crear Tarea</button>
+          
+        <TaskOutput usuario={usuario}/>
+      </div>
+  );
 }
 
 export default TaskInput;
