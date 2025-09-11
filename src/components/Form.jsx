@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getUsuarios } from '../services/CRUD.jsx';
+import { Link } from 'react-router-dom';
 
 
 function Form() {
@@ -55,7 +56,10 @@ function Form() {
             </div>
             <div id="btnsContainer">
                     <button onClick={iniciarSesion}>Iniciar sesion</button>
-                    <button onClick={() => navigate("/Register")}>Registrarse</button>
+                    <p>¿No tienes cuenta? registrate aqui<br />
+                        <Link to="/Register">Registrar</Link>
+                    </p>
+                    
             </div>
         </div>
     );
