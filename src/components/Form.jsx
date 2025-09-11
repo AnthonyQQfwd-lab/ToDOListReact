@@ -49,9 +49,9 @@ function Form() {
         <div>
             <div>
                 <label>Correo electronico</label><br />
-                <input type="text" placeholder='Gmail' value={gmail} onChange={(e)=>setGmail(e.target.value)}  /><br />
+                <input type="text" placeholder='Gmail' value={gmail} onChange={(e)=>setGmail(e.target.value)} autoComplete="off"/><br />
                 <label htmlFor="">Contraseña</label><br />
-                <input type="password" placeholder='Contraseña' value={password} onChange={(e)=>setPassword(e.target.value)} /><br />
+                <input type="password" placeholder='Contraseña' value={password} onChange={(e)=>setPassword(e.target.value)} autoComplete="off"/><br />
             </div>
             <div id="btnsContainer">
                     <button onClick={iniciarSesion}>Iniciar sesion</button>

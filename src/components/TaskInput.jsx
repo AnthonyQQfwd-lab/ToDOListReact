@@ -48,7 +48,9 @@ function TaskInput() {
   return (
       <div>
           <label htmlFor="">Tarea:</label>
-          <input type="text" id="tarea" value={tarea} onChange={(e)=>setTarea(e.target.value)}/>
+          <input type="text" id="tarea" value={tarea} onChange={(e)=>setTarea(e.target.value)}
+          onKeyDown={(e) => {if (e.key === 'Enter') { cargarTarea();}}}
+          />
           <button onClick={cargarTarea}>Crear Tarea</button>
           
         <TaskOutput usuarioProp={usuario} />

@@ -24,11 +24,12 @@ function Register() {
     async function registrarUsuario()
     {
         
-            if (usuario == "" || gmail == "" || password == "") {
+            if (usuario.trim() == "" || gmail.trim == "" || password.trim() == "") {
                 alert("Rellene los espacios faltantes");
             } 
             else
             {
+                
                 const usuarioEncontrado = usuarios.find(u =>
                     u.gmail.trim().toLowerCase() === gmail.trim().toLowerCase()
                 );
@@ -41,16 +42,23 @@ function Register() {
                 }
                 else
                 {
+                    if(password.length >= 8)
+                    {
                     
-                    const usuarioNuevo = {
-                        nombre: usuario,
-                        gmail: gmail,
-                        password: password,
-                        tasks: []
-                    };
-                    await createUsuarios(usuarioNuevo);
-                    
-                    navigate('/');
+                        const usuarioNuevo = {
+                            nombre: usuario,
+                            gmail: gmail,
+                            password: password,
+                            tasks: []
+                        };
+                        await createUsuarios(usuarioNuevo);
+                        alert("Registro exitoso, ahora inicie sesión")
+                        navigate('/');
+                    }
+                    else
+                    {
+                        alert("La contraseña debe de tener al menos 8 caracteres")
+                    }
                 }
             }
         

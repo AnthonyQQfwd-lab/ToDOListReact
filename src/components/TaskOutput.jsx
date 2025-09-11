@@ -9,7 +9,7 @@ function TaskOutput({ usuarioProp }) {
     const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
     const [usuario, setUsuario] = useState(null);
     const [indiceActual, setIndiceActual] = useState(null);
-    const [tareaEditada, setTareaEditada] = useState("");
+    const [tareaEditada, setTareaEditada] = useState('');
     
     useEffect(() => {
         setUsuario(usuarioProp);
@@ -42,15 +42,22 @@ function TaskOutput({ usuarioProp }) {
 
     // ===== SECCIÓN 5: FUNCIÓN PARA EDITAR TAREA =====
     async function editTask() {
-        const nuevaLista = [...usuario.tasks];
-        nuevaLista[indiceActual] = tareaEditada;
 
-        const usuarioActualizado = { ...usuario, tasks: nuevaLista };
-        await updateUsuario(usuario.id, { tasks: nuevaLista });
-        setUsuario(usuarioActualizado); // React detecta el cambio
+        if (tareaEditada.trim() == '')
+        {
+            alert("Por favor ingrese texto para editar la tarea")
+        }
+        else
+        {
+            const nuevaLista = [...usuario.tasks];
+            nuevaLista[indiceActual] = tareaEditada;
 
-        console.log("usuario",usuario)
-        hideModal();
+            const usuarioActualizado = { ...usuario, tasks: nuevaLista };
+            await updateUsuario(usuario.id, { tasks: nuevaLista });
+            setUsuario(usuarioActualizado); // React detecta el cambio
+            console.log("usuario",usuario)
+            hideModal();
+        }
     }
 
 
@@ -60,7 +67,9 @@ function TaskOutput({ usuarioProp }) {
             {/* Modal para editar tarea */}
             <dialog id="modal">
                 <label htmlFor="">Editar Tarea:</label>
-                <input type="text" value={tareaEditada} onChange={(e)=>setTareaEditada(e.target.value)}/>
+                <input type="text" value={tareaEditada} onChange={(e)=>setTareaEditada(e.target.value)}
+                    onKeyDown={(e) => {if (e.key === 'Enter') { editTask();}}}
+                />
                 <button type="text" onClick={editTask}>Enviar</button>
                 <button onClick={hideModal}>X</button>
             </dialog>

@@ -1,33 +1,45 @@
 {
   "Usuarios": [
     {
-      "id": "42f7",
+      "id": "9671",
       "nombre": "Anthony",
       "gmail": "123@gmail.com",
-      "password": "123",
+      "password": "11111111",
       "tasks": [
-        "tarea 1",
-        "tarea 3 editada",
+        "tarea 2 editada",
+        "Tarea 3",
         "tarea 4"
       ]
     },
     {
-      "id": "44f5",
-      "nombre": "maria",
+      "id": "0b6a",
+      "nombre": "Maria",
       "gmail": "456@gmail.com",
-      "password": "123",
+      "password": "11111111",
       "tasks": [
-        "tarea 1",
-        "tarea 2 editada",
-        "tarea 3"
+        "Tarea 1 maria",
+        "tarea 2 maria",
+        "tarea 3 maria "
       ]
     },
     {
-      "id": "7695",
-      "nombre": "rc",
-      "gmail": "rc@gmail.com",
-      "password": "44444444",
-      "tasks": []
+      "id": "1559",
+      "nombre": "emma",
+      "gmail": "tuptup@gmail.com",
+      "password": "12345678",
+      "tasks": [
+        "1",
+        "3"
+      ]
+    },
+    {
+      "id": "e69a",
+      "nombre": "Nai",
+      "gmail": "rios@gmail.com",
+      "password": "12345678",
+      "tasks": [
+        "tarea 1"
+      ]
     }
   ]
 }
