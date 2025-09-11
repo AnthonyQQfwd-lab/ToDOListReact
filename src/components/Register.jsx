@@ -57,7 +57,7 @@ function Register() {
     }
 
 
-    //registrarUsuario <input type="text" id="tarea" value={tarea} onChange={(e)=>setTarea(e.target.value)}/>
+    
     // ===== SECCIÓN 3: RENDERIZADO DEL FORMULARIO =====
     return (
         <div>

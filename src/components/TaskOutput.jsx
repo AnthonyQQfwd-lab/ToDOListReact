@@ -2,9 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { getUsuarios, createUsuarios, updateUsuario, deleteUsuario } from '../services/CRUD.jsx';
 
-function TaskOutput(usuarioInfo) {
+function TaskOutput({ usuarioProp }) {
 
-    console.log(usuarioInfo)
 
     // ===== SECCIÓN 1: INICIALIZACIÓN DE ESTADOS =====
     const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
@@ -12,20 +11,23 @@ function TaskOutput(usuarioInfo) {
     const [indiceActual, setIndiceActual] = useState(null);
     const [tareaEditada, setTareaEditada] = useState("");
     
-    
+    useEffect(() => {
+        setUsuario(usuarioProp);
+    }, [usuarioProp]);
+
+
     
 
     // ===== SECCIÓN 3: FUNCIÓN PARA ELIMINAR TAREA =====
-    async function deleteTarea(i)
-    {
-        usuario.tasks.splice(i,1)
-        const TasksList = usuario.tasks
-        await updateUsuario(
-            usuario.id, 
-            { tasks: TasksList }
-        )
+        async function deleteTarea(i) {
+        const nuevaLista = usuario.tasks.filter((_, index) => index !== i);
+        const usuarioActualizado = { ...usuario, tasks: nuevaLista };
         
+        const respuesta = await updateUsuario(usuario.id, { tasks: nuevaLista });
+        console.log(respuesta)
+        setUsuario(usuarioActualizado); // React detecta el cambio
     }
+
 
     // ===== SECCIÓN 4: FUNCIÓN PARA MOSTRAR MODAL DE EDICIÓN =====
     async function showModal()
@@ -33,24 +35,24 @@ function TaskOutput(usuarioInfo) {
         modal.showModal()
     }
 
-    // ===== SECCIÓN 5: FUNCIÓN PARA EDITAR TAREA =====
-    async function editTask()
-        {
-            console.log("indece actual", indiceActual)
-            usuario.tasks[indiceActual] = tareaEditada
-            const tasksList = usuario.tasks
-            await updateUsuario(
-                usuario.id, 
-                { tasks: tasksList }
-            )
-        
-        }
-
-    // ===== SECCIÓN 6: FUNCIÓN PARA CERRAR MODAL =====
     function hideModal()
     {
         modal.close();
     }
+
+    // ===== SECCIÓN 5: FUNCIÓN PARA EDITAR TAREA =====
+    async function editTask() {
+        const nuevaLista = [...usuario.tasks];
+        nuevaLista[indiceActual] = tareaEditada;
+
+        const usuarioActualizado = { ...usuario, tasks: nuevaLista };
+        await updateUsuario(usuario.id, { tasks: nuevaLista });
+        setUsuario(usuarioActualizado); // React detecta el cambio
+
+        console.log("usuario",usuario)
+        hideModal();
+    }
+
 
     // ===== SECCIÓN 7: RENDERIZADO DEL COMPONENTE =====
     return (
@@ -65,17 +67,18 @@ function TaskOutput(usuarioInfo) {
 
             {/* Lista de tareas del usuario */}
             <ul>
-                {usuarioInfo?.tasks?.length > 0
-                    ? usuarioInfo.tasks.map((tarea, i) => (
-                        <li key={i}>{tarea}
-                            <button onClick={() => deleteTarea(i)}>Eliminar</button>
-                            <button onClick={() => {showModal(); setIndiceActual(i);}}>Editar</button>
+                {usuario?.tasks?.length > 0
+                    ? usuario.tasks.map((tarea, i) => (
+                        <li key={i}>
+                        {tarea}
+                        <button onClick={() => deleteTarea(i)}>Eliminar</button>
+                        <button onClick={() => { showModal(); setIndiceActual(i); }}>Editar</button>
                         </li>
                     ))
                     : <li>No hay ninguna tarea</li>
                 }
-                
             </ul>
+
         </div>
     );
 }
