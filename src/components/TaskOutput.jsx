@@ -2,42 +2,53 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { getUsuarios, createUsuarios, updateUsuario, deleteUsuario } from '../services/CRUD.jsx';
 
-function TaskOutput({ usuarioProp }) {
+function TaskOutput({ usuarioProp, actualizarUsuario}) {
 
 
     // ===== SECCIÓN 1: INICIALIZACIÓN DE ESTADOS =====
     const usuarioActual = JSON.parse(sessionStorage.getItem('usuarioActual'));
-    const [usuario, setUsuario] = useState(null);
     const [indiceActual, setIndiceActual] = useState(null);
     const [tareaEditada, setTareaEditada] = useState('');
+    const [tareaAEliminar, setTareaAEliminar] = useState('');
     
-    useEffect(() => {
-        setUsuario(usuarioProp);
-    }, [usuarioProp]);
-
-
-    
-
     // ===== SECCIÓN 3: FUNCIÓN PARA ELIMINAR TAREA =====
-        async function deleteTarea(i) {
-        const nuevaLista = usuario.tasks.filter((_, index) => index !== i);
-        const usuarioActualizado = { ...usuario, tasks: nuevaLista };
+    async function deleteTarea() {
         
-        const respuesta = await updateUsuario(usuario.id, { tasks: nuevaLista });
-        console.log(respuesta)
-        setUsuario(usuarioActualizado); // React detecta el cambio
+        const nuevaLista = usuarioProp.tasks.filter((_, index) => index !== indiceActual);
+        const usuarioActualizado = { ...usuarioProp, tasks: nuevaLista };
+        
+        const respuesta = await updateUsuario(usuarioProp.id, { tasks: nuevaLista });
+        console.log("respuesta del json",respuesta)
+        console.log("usuario actualizado", usuarioActualizado)
+        console.log("usuarioProp",usuarioProp)
+        actualizarUsuario(usuarioActualizado) // React detecta el cambio
+        deleteModal.close()
     }
 
 
-    // ===== SECCIÓN 4: FUNCIÓN PARA MOSTRAR MODAL DE EDICIÓN =====
-    async function showModal()
+    // ===== SECCIÓN 4: FUNCIÓN PARA MOSTRAR MODAL DE EDICIÓN y ELIMINACION =====
+    async function showModal(i)
     {
+        setIndiceActual(i)
+        setTareaEditada(usuarioProp.tasks[i])
         modal.showModal()
     }
-
+    
     function hideModal()
     {
         modal.close();
+    }
+
+    function showDeleteModal(i)
+    {
+        setIndiceActual(i)
+        setTareaAEliminar(usuarioProp.tasks[i])
+        deleteModal.showModal()
+    }
+
+    function hideDeleteModal()
+    {
+        deleteModal.close();
     }
 
     // ===== SECCIÓN 5: FUNCIÓN PARA EDITAR TAREA =====
@@ -49,13 +60,12 @@ function TaskOutput({ usuarioProp }) {
         }
         else
         {
-            const nuevaLista = [...usuario.tasks];
+            const nuevaLista = [...usuarioProp.tasks];
             nuevaLista[indiceActual] = tareaEditada;
 
-            const usuarioActualizado = { ...usuario, tasks: nuevaLista };
-            await updateUsuario(usuario.id, { tasks: nuevaLista });
-            setUsuario(usuarioActualizado); // React detecta el cambio
-            console.log("usuario",usuario)
+            const usuarioActualizado = { ...usuarioProp, tasks: nuevaLista };
+            await updateUsuario(usuarioProp.id, { tasks: nuevaLista });
+            actualizarUsuario(usuarioActualizado) // React detecta el cambio
             hideModal();
         }
     }
@@ -73,18 +83,23 @@ function TaskOutput({ usuarioProp }) {
                 <button type="text" onClick={editTask}>Enviar</button>
                 <button onClick={hideModal}>X</button>
             </dialog>
+            <dialog id='deleteModal'>
+                    <label>Esta seguro de querer eliminar la tarea?</label><br />
+                    <p>Tarea: {tareaAEliminar} </p>
+                    <button onClick={deleteTarea} >Corfirmar</button><button onClick={() => hideDeleteModal()}>Denegar</button>
+            </dialog>
 
             {/* Lista de tareas del usuario */}
             <ul>
-                {usuario?.tasks?.length > 0
-                    ? usuario.tasks.map((tarea, i) => (
+                {usuarioProp?.tasks?.length > 0
+                    ? usuarioProp.tasks.map((tarea, i) => (
                         <li key={i}>
                         {tarea}
-                        <button onClick={() => deleteTarea(i)}>Eliminar</button>
-                        <button onClick={() => { showModal(); setIndiceActual(i); }}>Editar</button>
+                        <button onClick={() => showDeleteModal(i)}>Eliminar</button>
+                        <button onClick={() =>  showModal(i)  }>Editar</button>
                         </li>
                     ))
-                    : <li>No hay ninguna tarea</li>
+                    : <li>No hay ninguna tarea  </li>
                 }
             </ul>
 

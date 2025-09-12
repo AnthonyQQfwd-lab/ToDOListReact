@@ -17,10 +17,10 @@ function TaskInput() {
       const usuariosRecibidos = await getUsuarios();
       setUsuarios(usuariosRecibidos);
 
-      const usuarioEncontrado = usuariosRecibidos.find(u =>
+      const usuarioRecibido = usuariosRecibidos.find(u =>
         u.gmail.trim().toLowerCase() === usuarioActual.email.trim().toLowerCase()
       );
-      setUsuario(usuarioEncontrado);
+        setUsuario(usuarioRecibido);
       } catch (error) {
         console.error("Error al traer los usuarios del servicio", error);
       }
@@ -37,6 +37,7 @@ function TaskInput() {
     const usuarioActualizado = { ...usuario, tasks: listaTarea };
     await updateUsuario(usuario.id, usuarioActualizado);
     setUsuario(usuarioActualizado); 
+    console.log(usuarioActualizado)
     setTarea(""); 
     } else {
       alert("Por favor especifique el nombre de la tarea");
@@ -53,7 +54,7 @@ function TaskInput() {
           />
           <button onClick={cargarTarea}>Crear Tarea</button>
           
-        <TaskOutput usuarioProp={usuario} />
+        <TaskOutput usuarioProp={usuario} actualizarUsuario={setUsuario} />
       </div>
   );
 }

@@ -24,7 +24,7 @@ function Register() {
     async function registrarUsuario()
     {
         
-            if (usuario.trim() == "" || gmail.trim == "" || password.trim() == "") {
+            if (usuario.trim() == "" || gmail.trim() == "" || password.trim() == "") {
                 alert("Rellene los espacios faltantes");
             } 
             else
