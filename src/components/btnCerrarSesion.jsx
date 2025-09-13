@@ -8,7 +8,7 @@ function BtnCerrarSesion() {
     <div id="btnContainer">
         
         <button onClick={() => navigate("/")}>cerrar sesión</button>
-
+        
     </div>
   )
 }

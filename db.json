@@ -5,7 +5,11 @@
       "nombre": "Anthony",
       "gmail": "123@gmail.com",
       "password": "11111111",
-      "tasks": []
+      "tasks": [
+        "tarea 1 editada",
+        "tarea 2",
+        "tarea 3"
+      ]
     },
     {
       "id": "b0a8",
